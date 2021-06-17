@@ -1,7 +1,7 @@
-package org.omadac.vote.belenios;
+package org.omadac.vote.belenios.algo;
 
 import static java.util.stream.Collectors.joining;
-import static org.omadac.vote.belenios.ModularChecksum.checksum;
+import static org.omadac.vote.belenios.algo.ModularChecksum.checksum;
 
 import java.math.BigInteger;
 import java.util.List;

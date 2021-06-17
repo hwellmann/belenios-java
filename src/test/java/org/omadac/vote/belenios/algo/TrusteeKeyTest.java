@@ -1,4 +1,4 @@
-package org.omadac.vote.belenios;
+package org.omadac.vote.belenios.algo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,6 +8,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.junit.jupiter.api.Test;
+import org.omadac.vote.belenios.algo.GenTrusteeKey;
+import org.omadac.vote.belenios.algo.Groups;
+import org.omadac.vote.belenios.algo.Hex;
 import org.omadac.vote.belenios.model.Group;
 import org.omadac.vote.belenios.model.Proof;
 import org.omadac.vote.belenios.model.TrusteeKeyPair;

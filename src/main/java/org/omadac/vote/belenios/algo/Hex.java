@@ -1,4 +1,4 @@
-package org.omadac.vote.belenios;
+package org.omadac.vote.belenios.algo;
 
 public class Hex {
 

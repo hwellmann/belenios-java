@@ -1,13 +1,14 @@
-package org.omadac.vote.belenios;
+package org.omadac.vote.belenios.algo;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.omadac.vote.belenios.ModularChecksum.checksum;
+import static org.omadac.vote.belenios.algo.ModularChecksum.checksum;
 
 import java.math.BigInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.omadac.vote.belenios.algo.Groups;
 import org.omadac.vote.belenios.model.Group;
 
 import ch.openchvote.algorithms.general.GenRandomInteger;

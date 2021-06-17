@@ -1,16 +1,21 @@
-package org.omadac.vote.belenios;
+package org.omadac.vote.belenios.algo;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.omadac.vote.belenios.CreateBallot.createBallot;
-import static org.omadac.vote.belenios.CreateElectionResult.createResult;
-import static org.omadac.vote.belenios.CreateEncryptedTally.tally;
-import static org.omadac.vote.belenios.CreatePartialDecryption.decrypt;
-import static org.omadac.vote.belenios.GenCredentials.generateToken;
+import static org.omadac.vote.belenios.algo.CreateBallot.createBallot;
+import static org.omadac.vote.belenios.algo.CreateElectionResult.createResult;
+import static org.omadac.vote.belenios.algo.CreateEncryptedTally.tally;
+import static org.omadac.vote.belenios.algo.CreatePartialDecryption.decrypt;
+import static org.omadac.vote.belenios.algo.GenCredentials.generateToken;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.omadac.vote.belenios.algo.CreatePartialDecryption;
+import org.omadac.vote.belenios.algo.GenCredentials;
+import org.omadac.vote.belenios.algo.GenTrusteeKey;
+import org.omadac.vote.belenios.algo.Groups;
+import org.omadac.vote.belenios.algo.VerifyBallot;
 import org.omadac.vote.belenios.model.Ballot;
 import org.omadac.vote.belenios.model.Ciphertext;
 import org.omadac.vote.belenios.model.Credentials;
