@@ -13,27 +13,25 @@ import org.omadac.vote.belenios.model.Ciphertext;
 import org.omadac.vote.belenios.model.Election;
 import org.omadac.vote.belenios.model.PartialDecryption;
 import org.omadac.vote.belenios.model.Result;
-import org.omadac.vote.belenios.model.TrusteeKeyPair;
 
 public class CreateElectionResult {
 
-    public static Result createResult(Election election, TrusteeKeyPair keyPair, int numTallied,
+    public static Result createResult(Election election, int numTallied,
         List<List<Ciphertext>> encryptedTally, List<PartialDecryption> partialDecryptions) {
         var g = election.publicKey().group().g();
         var p = election.publicKey().group().p();
         Map<BigInteger, Integer> logTable = createLogTable(numTallied, g, p);
-        PartialDecryption decryption = partialDecryptions.get(0);
+
         List<List<Integer>> result = new ArrayList<>();
         for (int i = 0; i < encryptedTally.size(); i++) {
             List<Ciphertext> tallyItem = encryptedTally.get(i);
-            List<BigInteger> factors = decryption.decryptionFactors().get(i);
             List<Integer> resultItems = new ArrayList<>();
             for (int j = 0; j < tallyItem.size(); j++) {
-                Ciphertext ct = tallyItem.get(j);
-                BigInteger factor = factors.get(j);
+                var ct = tallyItem.get(j);
+                var factor = factor(i, j, partialDecryptions, p);
 
-                BigInteger exp = ct.beta().multiply(factor.modInverse(p)).mod(p);
-                Integer resultValue = logTable.get(exp);
+                var exp = ct.beta().multiply(factor.modInverse(p)).mod(p);
+                var resultValue = logTable.get(exp);
                 resultItems.add(resultValue);
             }
             result.add(resultItems);
@@ -45,6 +43,14 @@ public class CreateElectionResult {
             .partialDecryptions(partialDecryptions)
             .result(result)
             .build();
+    }
+
+    private static BigInteger factor(int i, int j, List<PartialDecryption> partialDecryptions, BigInteger p) {
+        BigInteger factor = BigInteger.ONE;
+        for (PartialDecryption pd: partialDecryptions) {
+            factor = factor.multiply(pd.decryptionFactors().get(i).get(j)).mod(p);
+        }
+        return factor;
     }
 
     private static Map<BigInteger, Integer> createLogTable(int numTallied, BigInteger g, BigInteger p) {
