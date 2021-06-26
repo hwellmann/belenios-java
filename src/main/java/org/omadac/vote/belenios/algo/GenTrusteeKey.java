@@ -16,6 +16,10 @@ public class GenTrusteeKey {
 
     public static TrusteeKeyPair genKeyPair(Group group) {
         var privateKey = GenRandomInteger.run(group.q());
+        return deriveKeyPair(privateKey, group);
+    }
+
+    public static TrusteeKeyPair deriveKeyPair(BigInteger privateKey, Group group) {
         var publicKey = group.g().modPow(privateKey, group.p());
         var id = buildId(publicKey);
 

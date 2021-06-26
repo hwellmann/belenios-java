@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.immutables.value.Value.Immutable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
@@ -13,8 +14,10 @@ public interface BallotSpec {
 
     List<Answer> answers();
 
+    @JsonProperty("election_hash")
     String electionHash();
 
+    @JsonProperty("election_uuid")
     String electionUuid();
 
     Signature signature();

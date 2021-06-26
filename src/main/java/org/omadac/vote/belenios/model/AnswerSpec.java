@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.immutables.value.Value.Immutable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
@@ -13,10 +14,13 @@ public interface AnswerSpec {
 
     List<Ciphertext> choices();
 
+    @JsonProperty("individual_proofs")
     List<List<Proof>> individualProofs();
 
+    @JsonProperty("overall_proof")
     List<Proof> overallProof();
 
     // @Nullable
+    @JsonProperty("blank_proof")
     List<Proof> blankProof();
 }

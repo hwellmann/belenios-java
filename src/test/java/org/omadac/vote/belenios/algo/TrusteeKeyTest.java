@@ -2,6 +2,8 @@ package org.omadac.vote.belenios.algo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -44,5 +46,11 @@ public class TrusteeKeyTest {
         TrusteeKeyPair keyPair = GenTrusteeKey.genKeyPair(group);
         assertThat(keyPair.id()).hasSize(8);
         assertThat(GenTrusteeKey.isValid(group, keyPair.trusteePublicKey())).isTrue();
+    }
+
+    @Test
+    public void readJsonString() throws IOException {
+        var key = JsonMapper.INSTANCE.readValue(new File("84BDB61F.privkey"), String.class);
+        assertThat(key).isEqualTo("24628282804907613543532348967256494707708964340889825523333532660383941806827");
     }
 }

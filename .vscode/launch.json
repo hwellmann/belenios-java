@@ -1,0 +1,23 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch BeleniosTool",
+            "request": "launch",
+            "mainClass": "org.omadac.vote.belenios.cli.BeleniosTool",
+            "projectName": "belenios",
+            "args": "decrypt --privkey=4E8B4A36.privkey",
+            "cwd": "/home/hwellmann/git/belenios/tests/tool/data/1w6spcGF8qTSCA/"
+        }
+    ]
+}
