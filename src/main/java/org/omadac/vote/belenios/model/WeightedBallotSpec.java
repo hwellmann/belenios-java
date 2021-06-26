@@ -1,17 +1,15 @@
 package org.omadac.vote.belenios.model;
 
-import java.math.BigInteger;
-
 import org.immutables.value.Value.Immutable;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize(builder = Proof.Builder.class)
-public interface ProofSpec {
+@JsonDeserialize(builder = WeightedBallot.Builder.class)
+public interface WeightedBallotSpec {
 
-    BigInteger challenge();
+    int weight();
 
-    BigInteger response();
+    Ballot ballot();
 }

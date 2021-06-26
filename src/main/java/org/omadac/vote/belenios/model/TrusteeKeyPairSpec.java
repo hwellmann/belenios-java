@@ -10,5 +10,7 @@ public interface TrusteeKeyPairSpec {
 
     TrusteePublicKey trusteePublicKey();
 
+    String id();
+
     BigInteger privateKey();
 }

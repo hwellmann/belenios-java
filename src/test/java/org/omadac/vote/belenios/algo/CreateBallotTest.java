@@ -8,11 +8,9 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Instant;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.omadac.vote.belenios.algo.Groups;
 import org.omadac.vote.belenios.model.Credentials;
 import org.omadac.vote.belenios.model.Election;
 
@@ -20,8 +18,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import ch.openchvote.algorithms.general.GenRandomInteger;
 
 public class CreateBallotTest {
 
@@ -51,18 +47,9 @@ public class CreateBallotTest {
 
     @Test
     public void shouldCreateBlankBallot() throws Exception {
-        System.out.println(Instant.now());
         var election = readElection();
-        System.out.println(Instant.now());
 
         var ballot = createBallot(election, credentials, List.of(List.of(1, 0, 0)));
-        System.out.println(Instant.now());
         assertThat(verifyBallot(ballot, election)).isTrue();
     }
-
-    @Test
-    public void random() {
-        System.out.println(GenRandomInteger.run(Groups.HOMOMORPHIC.q()));
-    }
-
 }

@@ -8,9 +8,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.junit.jupiter.api.Test;
-import org.omadac.vote.belenios.algo.GenTrusteeKey;
-import org.omadac.vote.belenios.algo.Groups;
-import org.omadac.vote.belenios.algo.Hex;
 import org.omadac.vote.belenios.model.Group;
 import org.omadac.vote.belenios.model.Proof;
 import org.omadac.vote.belenios.model.TrusteeKeyPair;
@@ -38,14 +35,14 @@ public class TrusteeKeyTest {
         var response = new BigInteger("61899678553699875386298524482495635368456257494822752952788876892322896717017");
 
         var proof = Proof.builder().challenge(challenge).response(response).build();
-        var trusteePublicKey = TrusteePublicKey.builder().id(keyId).publicKey(pubKey).pok(proof).build();
+        var trusteePublicKey = TrusteePublicKey.builder().publicKey(pubKey).pok(proof).build();
         assertThat(GenTrusteeKey.isValid(group, trusteePublicKey)).isTrue();
     }
 
     @Test
     public void roundTrip() {
         TrusteeKeyPair keyPair = GenTrusteeKey.genKeyPair(group);
-        assertThat(keyPair.trusteePublicKey().id()).hasSize(8);
+        assertThat(keyPair.id()).hasSize(8);
         assertThat(GenTrusteeKey.isValid(group, keyPair.trusteePublicKey())).isTrue();
     }
 }

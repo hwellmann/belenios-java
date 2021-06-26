@@ -78,7 +78,7 @@ public class CreateBallot {
             .individualProofs(proofs)
             .overallProof(createOverallProof(publicKey, publicCred, ct0, ctSigma, rawVote.get(0), prefix));
 
-        if (question.blank()) {
+        if (question.blankAnswerAllowed()) {
             builder.blankProof(createBlankProof(publicKey, publicCred, ct0, ctSigma, rawVote.get(0), prefix));
         }
         return builder.build();
@@ -121,10 +121,7 @@ public class CreateBallot {
     }
 
     private static void validateRawVote(Question question, List<Integer> rawVote) {
-        boolean isBlank = rawVote.get(0).equals(1);
-        if (!question.blankAnswerAllowed() && isBlank) {
-            throw new IllegalArgumentException("Blank vote is not allowed");
-        }
+        boolean isBlank = question.blankAnswerAllowed() && rawVote.get(0).equals(1);
         int sum = rawVote.stream().reduce(0, Integer::sum);
         if (isBlank && sum != 1) {
             throw new IllegalArgumentException("Blank vote must not contain non-zero answers");

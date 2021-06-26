@@ -22,12 +22,12 @@ public class GenTrusteeKey {
         var proof = buildProofOfKnowledge(group, publicKey, privateKey);
 
         var trusteePublicKey = TrusteePublicKey.builder()
-            .id(id)
             .publicKey(publicKey)
             .pok(proof)
             .build();
 
         return TrusteeKeyPair.builder()
+            .id(id)
             .privateKey(privateKey)
             .trusteePublicKey(trusteePublicKey)
             .build();

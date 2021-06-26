@@ -12,6 +12,7 @@ import org.omadac.vote.belenios.model.Ballot;
 import org.omadac.vote.belenios.model.Ciphertext;
 import org.omadac.vote.belenios.model.Election;
 import org.omadac.vote.belenios.model.Question;
+import org.omadac.vote.belenios.model.WeightedBallot;
 
 public class CreateEncryptedTally {
 
@@ -19,6 +20,13 @@ public class CreateEncryptedTally {
         List<List<Ciphertext>> neutral = neutral(election);
         BigInteger p = election.publicKey().group().p();
         return ballots.map(b -> extractCiphertexts(b))
+            .reduce(neutral, (left, right) -> combine(left, right, p));
+    }
+
+    public static List<List<Ciphertext>> tallyWeighted(Election election, Stream<WeightedBallot> ballots) {
+        List<List<Ciphertext>> neutral = neutral(election);
+        BigInteger p = election.publicKey().group().p();
+        return ballots.map(b -> extractCiphertexts(b, p))
             .reduce(neutral, (left, right) -> combine(left, right, p));
     }
 
@@ -37,6 +45,17 @@ public class CreateEncryptedTally {
 
     public static List<List<Ciphertext>> extractCiphertexts(Ballot ballot) {
         return ballot.answers().stream().map(a -> a.choices()).collect(toList());
+    }
+
+    public static List<List<Ciphertext>> extractCiphertexts(WeightedBallot ballot, BigInteger p) {
+        List<List<Ciphertext>> ciphertexts = extractCiphertexts(ballot.ballot());
+        return CreatePartialDecryption.transform(ciphertexts, ct -> weighted(ct, ballot.weight(), p));
+    }
+
+    public static Ciphertext weighted(Ciphertext ct, int weight, BigInteger p) {
+        var alpha = ct.alpha().modPow(BigInteger.valueOf(weight), p);
+        var beta = ct.beta().modPow(BigInteger.valueOf(weight), p);
+        return Ciphertext.builder().alpha(alpha).beta(beta).build();
     }
 
     public static List<List<Ciphertext>> combine(List<List<Ciphertext>> left, List<List<Ciphertext>> right,

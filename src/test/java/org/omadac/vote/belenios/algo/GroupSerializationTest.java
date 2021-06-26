@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigInteger;
 
 import org.junit.jupiter.api.Test;
-import org.omadac.vote.belenios.algo.Groups;
 import org.omadac.vote.belenios.model.Group;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

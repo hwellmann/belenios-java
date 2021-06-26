@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.immutables.value.Value.Immutable;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 @Immutable
 @ValueStyle
+@JsonDeserialize(builder = Answer.Builder.class)
 public interface AnswerSpec {
 
     List<Ciphertext> choices();

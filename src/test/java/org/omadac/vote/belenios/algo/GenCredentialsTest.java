@@ -6,8 +6,6 @@ import java.math.BigInteger;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
-import org.omadac.vote.belenios.algo.GenCredentials;
-import org.omadac.vote.belenios.algo.Groups;
 import org.omadac.vote.belenios.model.Credentials;
 import org.omadac.vote.belenios.model.Group;
 

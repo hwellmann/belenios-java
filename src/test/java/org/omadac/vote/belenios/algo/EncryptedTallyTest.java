@@ -10,15 +10,13 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import org.junit.jupiter.api.Test;
-import org.omadac.vote.belenios.algo.CreateEncryptedTally;
-import org.omadac.vote.belenios.algo.JsonMapper;
 import org.omadac.vote.belenios.model.Ciphertext;
 import org.omadac.vote.belenios.model.Credentials;
 import org.omadac.vote.belenios.model.Election;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class EncryptedTallyTest {
 

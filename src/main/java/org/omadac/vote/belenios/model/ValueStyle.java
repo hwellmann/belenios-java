@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.immutables.value.Value;
+import org.immutables.value.Value.Style.ValidationMethod;
 
 @Target({ElementType.PACKAGE, ElementType.TYPE})
 @Retention(RetentionPolicy.CLASS)
@@ -17,6 +18,8 @@ import org.immutables.value.Value;
 
     get = "",
 
-    typeImmutable = "*")
+    typeImmutable = "*",
+
+    validationMethod = ValidationMethod.NONE)
 public @interface ValueStyle {
 }
