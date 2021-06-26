@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -18,8 +17,6 @@ import org.omadac.vote.belenios.algo.JsonMapper;
 import org.omadac.vote.belenios.model.Ballot;
 import org.omadac.vote.belenios.model.Ciphertext;
 import org.omadac.vote.belenios.model.Election;
-import org.omadac.vote.belenios.model.PartialDecryption;
-import org.omadac.vote.belenios.model.TrusteeKeyPair;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -33,8 +30,7 @@ public class Decrypt implements Callable<Integer> {
     private Ballot toBallot(String line) {
         try {
             return JsonMapper.INSTANCE.readValue(line, Ballot.class);
-        }
-        catch (IOException exc) {
+        } catch (IOException exc) {
             throw new IllegalArgumentException("Cannot parse ballot", exc);
         }
     }

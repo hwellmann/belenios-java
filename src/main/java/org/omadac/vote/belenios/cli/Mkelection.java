@@ -6,13 +6,11 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.omadac.vote.belenios.algo.JsonMapper;
+import org.omadac.vote.belenios.algo.Trustees;
 import org.omadac.vote.belenios.model.Election;
 import org.omadac.vote.belenios.model.Group;
 import org.omadac.vote.belenios.model.TrusteePublicKey;
 import org.omadac.vote.belenios.model.WrappedPublicKey;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -32,26 +30,12 @@ public class Mkelection implements Callable<Integer> {
         "--template"}, description = "Read identities from FILE. One credential will be generated for each line of FILE", required = true)
     private File template;
 
-    private TrusteePublicKey toPublicKeys(List<Object> trustee) {
-        if ("Single".equals(trustee.get(0))) {
-            try {
-                String json = JsonMapper.INSTANCE.writeValueAsString(trustee.get(1));
-                return JsonMapper.INSTANCE.readValue(json, TrusteePublicKey.class);
-            } catch (JsonProcessingException exc) {
-                throw new IllegalArgumentException(exc);
-            }
-        }
-        return null;
-    }
-
     @Override
     public Integer call() throws Exception {
         Group g = JsonMapper.INSTANCE.readValue(group, Group.class);
         Election election = JsonMapper.INSTANCE.readValue(template, Election.class);
-        List<List<Object>> trustees = JsonMapper.INSTANCE.readValue(new File("trustees.json"),
-            new TypeReference<>() {});
+        List<TrusteePublicKey> trustees = Trustees.readTrustees(new File("trustees.json"));
         BigInteger y = trustees.stream()
-            .map(this::toPublicKeys)
             .map(pk -> pk.publicKey())
             .reduce(BigInteger.ONE, BigInteger::multiply)
             .mod(g.p());
