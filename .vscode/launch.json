@@ -16,8 +16,8 @@
             "request": "launch",
             "mainClass": "org.omadac.vote.belenios.cli.BeleniosTool",
             "projectName": "belenios",
-            "args": "decrypt --privkey=4E8B4A36.privkey",
-            "cwd": "/home/hwellmann/git/belenios/tests/tool/data/1w6spcGF8qTSCA/"
+            "args": "validate",
+            "cwd": "/home/hwellmann/git/belenios/tests/tool/data/gfxDgHfiXi7k5B/"
         }
     ]
 }
