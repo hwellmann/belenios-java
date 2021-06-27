@@ -1,8 +1,10 @@
 package org.omadac.vote.belenios.cli;
 
+import io.quarkus.picocli.runtime.annotations.TopCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+@TopCommand
 @Command(name = "belenios-tool", mixinStandardHelpOptions = true, version = "1.0.0-SNAPSHOT", description = "election management tool", subcommands = {
     Credgen.class,
     Decrypt.class,
@@ -12,6 +14,8 @@ import picocli.CommandLine.Command;
     Sha256B64.class,
     TrusteeKeygen.class,
     Validate.class,
+    Verify.class,
+    VerifyDiff.class,
     Vote.class
 })
 public class BeleniosTool {

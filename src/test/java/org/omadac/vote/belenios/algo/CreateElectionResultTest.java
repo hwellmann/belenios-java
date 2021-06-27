@@ -65,7 +65,7 @@ public class CreateElectionResultTest {
         List<Credentials> credentials = new ArrayList<>();
         List<Ballot> ballots = new ArrayList<>();
 
-        int numVoters = 1000;
+        int numVoters = 10;
         log.info("Generating {} credentials", numVoters);
         for (int i = 0; i < numVoters; i++) {
             Credentials cred = GenCredentials.generate(election.uuid(), group);

@@ -33,8 +33,11 @@ public class JsonMapper {
         try {
             return INSTANCE.readValue(json, klass);
         }
-        catch (IOException exc) {
+        catch (JsonProcessingException exc) {
             throw new IllegalArgumentException("Cannot parse JSON", exc);
+        }
+        catch (IOException exc) {
+            throw new IllegalArgumentException("Cannot read from file " + json, exc);
         }
     }
 }
