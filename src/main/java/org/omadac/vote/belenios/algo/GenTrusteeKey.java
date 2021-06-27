@@ -10,8 +10,6 @@ import org.omadac.vote.belenios.model.Proof;
 import org.omadac.vote.belenios.model.TrusteeKeyPair;
 import org.omadac.vote.belenios.model.TrusteePublicKey;
 
-import ch.openchvote.algorithms.general.GenRandomInteger;
-
 public class GenTrusteeKey {
 
     public static TrusteeKeyPair genKeyPair(Group group) {

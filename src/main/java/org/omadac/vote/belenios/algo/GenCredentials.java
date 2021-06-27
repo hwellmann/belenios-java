@@ -11,8 +11,6 @@ import javax.crypto.spec.PBEKeySpec;
 import org.omadac.vote.belenios.model.Credentials;
 import org.omadac.vote.belenios.model.Group;
 
-import ch.openchvote.algorithms.general.GenRandomInteger;
-
 public class GenCredentials {
 
     public static final String BASE58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
@@ -74,7 +72,7 @@ public class GenCredentials {
     public static String generateToken() {
         String raw = "";
         for (int i = 0; i < TOKEN_LENGTH; i++) {
-            int index = GenRandomInteger.run(0, BASE58.length() - 1);
+            int index = GenRandomInteger.run(BASE58.length());
             char c = BASE58.charAt(index);
             raw += c;
         }

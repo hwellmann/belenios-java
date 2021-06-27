@@ -16,8 +16,7 @@
             "request": "launch",
             "mainClass": "org.omadac.vote.belenios.cli.BeleniosTool",
             "projectName": "belenios",
-            "args": "validate",
-            "cwd": "/home/hwellmann/git/belenios/tests/tool/data/GurA5979RJKSt5/"
+            "args": "validate"
         }
     ]
 }

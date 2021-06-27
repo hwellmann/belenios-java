@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.graalvm.collections.Pair;
 import org.omadac.vote.belenios.model.Answer;
 import org.omadac.vote.belenios.model.Ballot;
 import org.omadac.vote.belenios.model.Ballot.Builder;
@@ -25,9 +26,6 @@ import org.omadac.vote.belenios.model.Proof;
 import org.omadac.vote.belenios.model.Question;
 import org.omadac.vote.belenios.model.Signature;
 import org.omadac.vote.belenios.model.WrappedPublicKey;
-
-import ch.openchvote.algorithms.general.GenRandomInteger;
-import ch.openchvote.util.tuples.Pair;
 
 public class CreateBallot {
 
@@ -60,10 +58,10 @@ public class CreateBallot {
 
         var choicesAndProofs = rawVote.stream().map(vote -> createCiphertext(publicKey, publicCred, vote))
             .collect(toList());
-        var choicesAndSecrets = choicesAndProofs.stream().map(Pair::getFirst).collect(toList());
-        var choices = choicesAndProofs.stream().map(Pair::getFirst).map(CiphertextAndSecret::ciphertext)
+        var choicesAndSecrets = choicesAndProofs.stream().map(Pair::getLeft).collect(toList());
+        var choices = choicesAndProofs.stream().map(Pair::getLeft).map(CiphertextAndSecret::ciphertext)
             .collect(toList());
-        var proofs = choicesAndProofs.stream().map(Pair::getSecond).collect(toList());
+        var proofs = choicesAndProofs.stream().map(Pair::getRight).collect(toList());
 
         var ct0 = choicesAndSecrets.get(0);
         var ctSigma = sum(choicesAndSecrets, publicKey.group().p());
@@ -101,7 +99,7 @@ public class CreateBallot {
         } else {
             proofs = createProofOfOne(publicKey, publicCred, ct);
         }
-        return new Pair<>(ct, proofs);
+        return Pair.create(ct, proofs);
     }
 
     private static CiphertextAndSecret sum(List<CiphertextAndSecret> cts, BigInteger p) {

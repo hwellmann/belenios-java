@@ -7,14 +7,12 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.function.Function;
 
+import org.graalvm.collections.Pair;
 import org.omadac.vote.belenios.model.Ciphertext;
 import org.omadac.vote.belenios.model.Election;
 import org.omadac.vote.belenios.model.PartialDecryption;
 import org.omadac.vote.belenios.model.Proof;
 import org.omadac.vote.belenios.model.TrusteeKeyPair;
-
-import ch.openchvote.algorithms.general.GenRandomInteger;
-import ch.openchvote.util.tuples.Pair;
 
 public class CreatePartialDecryption {
 
@@ -22,8 +20,8 @@ public class CreatePartialDecryption {
         List<List<Ciphertext>> encryptedTally) {
         var decryptionFactorsAndProofs = transform(encryptedTally,
             ct -> decryptionFactorAndProof(ct, election, keyPair));
-        List<List<BigInteger>> decryptionFactors = transform(decryptionFactorsAndProofs, Pair::getFirst);
-        List<List<Proof>> proofs = transform(decryptionFactorsAndProofs, Pair::getSecond);
+        List<List<BigInteger>> decryptionFactors = transform(decryptionFactorsAndProofs, Pair::getLeft);
+        List<List<Proof>> proofs = transform(decryptionFactorsAndProofs, Pair::getRight);
         return PartialDecryption.builder()
             .decryptionFactors(decryptionFactors)
             .decryptionProofs(proofs)
@@ -54,7 +52,7 @@ public class CreatePartialDecryption {
         var challenge = checksum(message, q);
         var response = challenge.multiply(x).add(w).mod(p);
         var proof = Proof.builder().challenge(challenge).response(response).build();
-        return new Pair<>(factor, proof);
+        return Pair.create(factor, proof);
     }
 
     public static boolean verify(Election election, TrusteeKeyPair keyPair,

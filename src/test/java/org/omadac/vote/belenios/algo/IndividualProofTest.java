@@ -10,8 +10,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.omadac.vote.belenios.model.Group;
 
-import ch.openchvote.algorithms.general.GenRandomInteger;
-
 public class IndividualProofTest {
 
     private static final Group GROUP = Groups.HOMOMORPHIC;
