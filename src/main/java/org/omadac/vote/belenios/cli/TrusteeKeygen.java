@@ -31,7 +31,8 @@ public class TrusteeKeygen implements Callable<Integer> {
         TrusteeKeyPair keyPair = GenTrusteeKey.genKeyPair(g);
         String privKey = String.format("\"%s\"\n", keyPair.privateKey());
         Files.writeString(Paths.get(keyPair.id() + ".privkey"), privKey);
-        JsonMapper.INSTANCE.writeValue(new File(keyPair.id() + ".pubkey"), keyPair.trusteePublicKey());
+        String json = JsonMapper.INSTANCE.writeValueAsString(keyPair.trusteePublicKey());
+        Files.writeString(Paths.get(keyPair.id() + ".pubkey"), json + "\n");
 
         return 0;
     }
