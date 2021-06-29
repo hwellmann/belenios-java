@@ -18,10 +18,10 @@ import org.graalvm.collections.Pair;
 import org.omadac.vote.belenios.model.Answer;
 import org.omadac.vote.belenios.model.Ballot;
 import org.omadac.vote.belenios.model.Ballot.Builder;
+import org.omadac.vote.belenios.model.Ciphertext;
 import org.omadac.vote.belenios.model.CiphertextAndSecret;
 import org.omadac.vote.belenios.model.Credentials;
 import org.omadac.vote.belenios.model.Election;
-import org.omadac.vote.belenios.model.Group;
 import org.omadac.vote.belenios.model.Proof;
 import org.omadac.vote.belenios.model.Question;
 import org.omadac.vote.belenios.model.Signature;
@@ -77,7 +77,11 @@ public class CreateBallot {
             .overallProof(createOverallProof(publicKey, publicCred, ct0, ctSigma, rawVote.get(0), prefix));
 
         if (question.blankAnswerAllowed()) {
-            builder.blankProof(createBlankProof(publicKey, publicCred, ct0, ctSigma, rawVote.get(0), prefix));
+            builder.blankProof(createBlankProof(publicKey, publicCred, ct0, ctSigma, rawVote.get(0), prefix))
+                .overallProof(createOverallProof(publicKey, publicCred, ct0, ctSigma, rawVote.get(0), prefix));
+        } else {
+            Integer choice = rawVote.stream().reduce(0, Integer::sum);
+            builder.overallProof(createIntervalProof(publicKey, publicCred, ctSigma, choice, question.min(), question.max()));
         }
         return builder.build();
     }
@@ -93,12 +97,7 @@ public class CreateBallot {
             .multiply(group.g().modPow(BigInteger.valueOf(rawVote), group.p()))
             .mod(group.p());
         var ct = CiphertextAndSecret.builder().alpha(alpha).beta(beta).r(r).build();
-        List<Proof> proofs;
-        if (rawVote == 0) {
-            proofs = createProofOfZero(publicKey, publicCred, ct);
-        } else {
-            proofs = createProofOfOne(publicKey, publicCred, ct);
-        }
+        List<Proof> proofs = createIntervalProof(publicKey, publicCred, ct, rawVote, 0, 1);
         return Pair.create(ct, proofs);
     }
 
@@ -134,69 +133,59 @@ public class CreateBallot {
         }
     }
 
-    private static List<Proof> createProofOfZero(WrappedPublicKey publicKey, BigInteger publicCred,
-        CiphertextAndSecret ct) {
+    private static List<Proof> createIntervalProof(WrappedPublicKey publicKey, BigInteger publicCred,
+        CiphertextAndSecret ct, int choice, int min, int max) {
+        List<Proof> proofs = new ArrayList<>();
+        List<Ciphertext> abs = new ArrayList<>();
         var group = publicKey.group();
+        for (int j = min; j <= max; j++) {
+            if (j == choice) {
+                var proof = Proof.builder().challenge(BigInteger.ZERO).response(BigInteger.ZERO).build();
+                proofs.add(proof);
 
+                var ab = Ciphertext.builder().alpha(BigInteger.ZERO).beta(BigInteger.ZERO).build();
+                abs.add(ab);
+            } else {
+                var challenge = GenRandomInteger.run(group.q());
+                var response = GenRandomInteger.run(group.q());
+                var proof = Proof.builder().challenge(challenge).response(response).build();
+                proofs.add(proof);
+
+                var a1Num = group.g().modPow(response, group.p());
+                var aDenom = ct.alpha().modPow(challenge, group.p());
+                var a = a1Num.multiply(aDenom.modInverse(group.p())).mod(group.p());
+
+                var bNum = publicKey.y().modPow(response, group.p());
+                var bDenom = ct.beta().multiply(group.g().modInverse(group.p()).modPow(BigInteger.valueOf(j), group.p()))
+                    .modPow(challenge, group.p());
+                var b = bNum.multiply(bDenom.modInverse(group.p())).mod(group.p());
+                
+                var ab = Ciphertext.builder().alpha(a).beta(b).build();
+                abs.add(ab);            
+            }
+        }
+        int i = choice - min;
         var w = GenRandomInteger.run(group.q());
-        var a0 = group.g().modPow(w, group.p());
-        var b0 = publicKey.y().modPow(w, group.p());
+        var ai = group.g().modPow(w, group.p());
+        var bi = publicKey.y().modPow(w, group.p());
+        var abi = Ciphertext.builder().alpha(ai).beta(bi).build();
+        abs.set(i, abi);
 
-        var challenge1 = GenRandomInteger.run(group.q());
-        var response1 = GenRandomInteger.run(group.q());
-
-        var a1Num = group.g().modPow(response1, group.p());
-        var a1Denom = ct.alpha().modPow(challenge1, group.p());
-        var a1 = a1Num.multiply(a1Denom.modInverse(group.p())).mod(group.p());
-
-        var b1Num = publicKey.y().modPow(response1, group.p());
-        var b1Denom = ct.beta().multiply(group.g().modInverse(group.p())).modPow(challenge1, group.p());
-        var b1 = b1Num.multiply(b1Denom.modInverse(group.p())).mod(group.p());
-
-        var message = String.format("prove|%s|%s,%s|%s,%s,%s,%s", publicCred.toString(),
-            ct.alpha().toString(), ct.beta().toString(),
-            a0.toString(), b0.toString(), a1.toString(), b1.toString());
-
+        var message = String.format("prove|%s|%s,%s|", publicCred.toString(),
+        ct.alpha().toString(), ct.beta().toString());
+        for (Ciphertext ab : abs) {
+            message += (ab.alpha() + "," + ab.beta() + ",");
+        }
+        message = message.substring(0, message.length() - 1);
         var checksum = checksum(message, group.q());
 
-        var challenge0 = checksum.subtract(challenge1).mod(group.q());
-        var response0 = challenge0.multiply(ct.r()).add(w).mod(group.q());
-
-        var proof0 = Proof.builder().challenge(challenge0).response(response0).build();
-        var proof1 = Proof.builder().challenge(challenge1).response(response1).build();
-        return List.of(proof0, proof1);
-    }
-
-    private static List<Proof> createProofOfOne(WrappedPublicKey publicKey, BigInteger publicCred,
-        CiphertextAndSecret ct) {
-        var group = publicKey.group();
-
-        var challenge0 = GenRandomInteger.run(group.q());
-        var response0 = GenRandomInteger.run(group.q());
-
-        var a0Num = group.g().modPow(response0, group.p());
-        var a0Denom = ct.alpha().modPow(challenge0, group.p());
-        var a0 = a0Num.multiply(a0Denom.modInverse(group.p())).mod(group.p());
-
-        var b0Num = publicKey.y().modPow(response0, group.p());
-        var b0Denom = ct.beta().modPow(challenge0, group.p());
-        var b0 = b0Num.multiply(b0Denom.modInverse(group.p())).mod(group.p());
-
-        var w = GenRandomInteger.run(group.q());
-        var a1 = group.g().modPow(w, group.p());
-        var b1 = publicKey.y().modPow(w, group.p());
-
-        var message = String.format("prove|%s|%s,%s|%s,%s,%s,%s",
-            publicCred, ct.alpha(), ct.beta(), a0, b0, a1, b1);
-
-        var checksum = checksum(message, group.q());
-
-        var challenge1 = checksum.subtract(challenge0).mod(group.q());
-        var response1 = challenge1.multiply(ct.r()).add(w).mod(group.q());
-
-        var proof0 = Proof.builder().challenge(challenge0).response(response0).build();
-        var proof1 = Proof.builder().challenge(challenge1).response(response1).build();
-        return List.of(proof0, proof1);
+        var challengeSum = proofs.stream().map(Proof::challenge).reduce(BigInteger.ZERO, BigInteger::add);
+        var challengei = checksum.subtract(challengeSum).mod(group.q());
+        var responsei = challengei.multiply(ct.r()).add(w).mod(group.q());
+        var proofi = Proof.builder().challenge(challengei).response(responsei).build();
+        proofs.set(i, proofi);
+            
+        return proofs;    
     }
 
     private static List<Proof> createBlankProof(WrappedPublicKey publicKey, BigInteger publicCred,
@@ -217,7 +206,7 @@ public class CreateBallot {
             var a0 = group.g().modPow(w, group.p());
             var b0 = publicKey.y().modPow(w, group.p());
 
-            String message = String.format("bproof0|%s|%s|%s,%s,%s,%s", publicCred, P, a0, b0, aSigma, bSigma);
+            var message = String.format("bproof0|%s|%s|%s,%s,%s,%s", publicCred, P, a0, b0, aSigma, bSigma);
             var checksum = checksum(message, group.q());
 
             var challenge0 = checksum.subtract(challengeSigma).mod(group.q());
@@ -270,7 +259,7 @@ public class CreateBallot {
             var a1 = group.g().modPow(w, group.p());
             var b1 = publicKey.y().modPow(w, group.p());
 
-            String message = String.format("bproof1|%s|%s|%s,%s,%s,%s", publicCred, prefix, a0, b0, a1, b1);
+            var message = String.format("bproof1|%s|%s|%s,%s,%s,%s", publicCred, prefix, a0, b0, a1, b1);
             var checksum = checksum(message, group.q());
 
             var challenge1 = checksum.subtract(challenge0).mod(group.q());
@@ -293,7 +282,7 @@ public class CreateBallot {
             var a0 = group.g().modPow(w, group.p());
             var b0 = publicKey.y().modPow(w, group.p());
 
-            String message = String.format("bproof1|%s|%s|%s,%s,%s,%s", publicCred, prefix, a0, b0, a1, b1);
+            var message = String.format("bproof1|%s|%s|%s,%s,%s,%s", publicCred, prefix, a0, b0, a1, b1);
             var checksum = checksum(message, group.q());
 
             var challenge0 = checksum.subtract(challenge1).mod(group.q());
@@ -321,17 +310,17 @@ public class CreateBallot {
     public static Signature createSignature(List<Answer> answers, Credentials credentials,
         Election election) {
 
-        Group group = election.publicKey().group();
-        BigInteger secretKey = GenCredentials.toSecretKey(credentials.privateCred(), election.uuid(), group);
+        var group = election.publicKey().group();
+        var secretKey = GenCredentials.toSecretKey(credentials.privateCred(), election.uuid(), group);
 
         var w = GenRandomInteger.run(group.q());
         var a = group.g().modPow(w, group.p());
 
-        String text = answers.stream().flatMap(answer -> answer.choices().stream())
+        var text = answers.stream().flatMap(answer -> answer.choices().stream())
             .map(c -> c.alpha() + "," + c.beta())
             .collect(Collectors.joining(","));
 
-        String message = String.format("sig|%s|%s|%s", credentials.publicCred(), a, text);
+        var message = String.format("sig|%s|%s|%s", credentials.publicCred(), a, text);
         var challenge = checksum(message, group.q());
         var response = w.subtract(secretKey.multiply(challenge)).mod(group.q());
 

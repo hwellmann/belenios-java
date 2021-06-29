@@ -1,0 +1,5 @@
+voter1@example.com,voter1 i76-2CJ-5AF-RSR-34v
+voter2@example.com,voter2 6Sq-B9M-VUG-5qc-9A5
+voter3@example.com,voter3 1J5-wCz-93D-x5R-rJg
+voter4@example.com,voter4 uDk-zhJ-Yjo-8fi-USD
+voter5@example.com,voter5 Rfe-FXf-7Ys-sqi-Qjr

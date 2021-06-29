@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.joining;
 import static org.omadac.vote.belenios.algo.ModularChecksum.checksum;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -12,6 +13,7 @@ import org.omadac.vote.belenios.model.Ballot;
 import org.omadac.vote.belenios.model.Ciphertext;
 import org.omadac.vote.belenios.model.Election;
 import org.omadac.vote.belenios.model.Group;
+import org.omadac.vote.belenios.model.Proof;
 import org.omadac.vote.belenios.model.Signature;
 import org.omadac.vote.belenios.model.WrappedPublicKey;
 
@@ -20,27 +22,24 @@ public class VerifyBallot {
     public static boolean verifyBallot(Ballot ballot, Election election) {
         var publicCred = ballot.signature().publicKey();
         for (int q = 0; q < election.questions().size(); q++) {
-            var blankAllowed = election.questions().get(q).blankAnswerAllowed();
+            var question = election.questions().get(q);
+            var blankAllowed = question.blankAnswerAllowed();
             var answer = ballot.answers().get(q);
             for (int i = 0; i < answer.choices().size(); i++) {
                 var choice = answer.choices().get(i);
-                var proof = answer.individualProofs().get(i);
-                var isCorrect = verifyVote(choice.alpha(), choice.beta(), proof.get(0).challenge(),
-                    proof.get(0).response(),
-                    proof.get(1).challenge(), proof.get(1).response(), publicCred, election.publicKey());
+                var proofs = answer.individualProofs().get(i);
+                var isCorrect = verifyIntervalProof(election.publicKey(), publicCred, choice, 0, 1, proofs);
                 if (!isCorrect) {
                     return false;
                 }
             }
 
-            if (blankAllowed && !verifyBlankProof(answer, publicCred, election.publicKey())) {
-                return false;
+            if (blankAllowed) {
+                return verifyBlankProof(answer, publicCred, election.publicKey()) && verifyOverallProof(answer, publicCred, election.publicKey());
             }
 
-            if (!verifyOverallProof(answer, publicCred, election.publicKey())) {
-                return false;
-            }
-
+            var ctSigma = sumCt(answer.choices(), election.publicKey().group().p());
+            return verifyIntervalProof(election.publicKey(), publicCred, ctSigma, question.min(), question.max(), answer.overallProof());
         }
 
         return verifySignature(ballot.signature(), ballot.answers(), election.publicKey().group());
@@ -49,7 +48,7 @@ public class VerifyBallot {
     private static Ciphertext sumCt(List<Ciphertext> cts, BigInteger p) {
         var alpha = BigInteger.ONE;
         var beta = BigInteger.ONE;
-        for (int i = 1; i < cts.size(); i++) {
+        for (int i = 0; i < cts.size(); i++) {
             alpha = alpha.multiply(cts.get(i).alpha()).mod(p);
             beta = beta.multiply(cts.get(i).beta()).mod(p);
         }
@@ -58,6 +57,41 @@ public class VerifyBallot {
             .beta(beta)
             .build();
     }
+
+    public static boolean verifyIntervalProof(WrappedPublicKey publicKey, BigInteger publicCred,
+        Ciphertext ct, int min, int max, List<Proof> proofs) {
+        var group = publicKey.group();
+        var j = min;
+        List<Ciphertext> abs = new ArrayList<>();
+        for (Proof proof : proofs) {
+            var challenge = proof.challenge();
+            var response = proof.response();
+            var a1Num = group.g().modPow(response, group.p());
+            var aDenom = ct.alpha().modPow(challenge, group.p());
+            var a = a1Num.multiply(aDenom.modInverse(group.p())).mod(group.p());
+
+            var bNum = publicKey.y().modPow(response, group.p());
+            var bDenom = ct.beta().multiply(group.g().modInverse(group.p()).modPow(BigInteger.valueOf(j), group.p()))
+                .modPow(challenge, group.p());
+            var b = bNum.multiply(bDenom.modInverse(group.p())).mod(group.p());
+                
+            var ab = Ciphertext.builder().alpha(a).beta(b).build();
+            abs.add(ab);            
+            j++;
+        }
+
+        var message = String.format("prove|%s|%s,%s|", publicCred.toString(),
+        ct.alpha().toString(), ct.beta().toString());
+        for (Ciphertext ab : abs) {
+            message += (ab.alpha() + "," + ab.beta() + ",");
+        }
+        message = message.substring(0, message.length() - 1);
+        var checksum = checksum(message, group.q());
+
+        var challengeSum = proofs.stream().map(Proof::challenge).reduce(BigInteger.ZERO, BigInteger::add).mod(group.q());
+        return checksum.equals(challengeSum);
+    }
+
 
     public static boolean verifyVote(BigInteger alpha, BigInteger beta, BigInteger challenge0, BigInteger response0,
         BigInteger challenge1, BigInteger response1, BigInteger publicCred, WrappedPublicKey wrappedPublicKey) {
@@ -91,7 +125,7 @@ public class VerifyBallot {
 
     public static boolean verifyBlankProof(Answer answer, BigInteger publicCred, WrappedPublicKey publicKey) {
         var ct0 = answer.choices().get(0);
-        var ctSigma = sumCt(answer.choices(), publicKey.group().p());
+        var ctSigma = sumCt(answer.choices().subList(1, answer.choices().size()), publicKey.group().p());
         var alpha0 = ct0.alpha();
         var beta0 = ct0.beta();
         var alphaSigma = ctSigma.alpha();
@@ -135,7 +169,7 @@ public class VerifyBallot {
 
     public static boolean verifyOverallProof(Answer answer, BigInteger publicCred, WrappedPublicKey publicKey) {
         var ct0 = answer.choices().get(0);
-        var ctSigma = sumCt(answer.choices(), publicKey.group().p());
+        var ctSigma = sumCt(answer.choices().subList(1, answer.choices().size()), publicKey.group().p());
         var alpha0 = ct0.alpha();
         var beta0 = ct0.beta();
         var alphaSigma = ctSigma.alpha();
