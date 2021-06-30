@@ -35,11 +35,19 @@ public class VerifyBallot {
             }
 
             if (blankAllowed) {
-                return verifyBlankProof(answer, publicCred, election.publicKey()) && verifyOverallProof(answer, publicCred, election.publicKey());
-            }
+                var isCorrect = verifyBlankProof(answer, publicCred, election.publicKey())
+                    && verifyOverallProof(answer, publicCred, election.publicKey());
 
-            var ctSigma = sumCt(answer.choices(), election.publicKey().group().p());
-            return verifyIntervalProof(election.publicKey(), publicCred, ctSigma, question.min(), question.max(), answer.overallProof());
+                if (!isCorrect) {
+                    return false;
+                }
+            } else {
+                var ctSigma = sumCt(answer.choices(), election.publicKey().group().p());
+                if (!verifyIntervalProof(election.publicKey(), publicCred, ctSigma, question.min(), question.max(),
+                    answer.overallProof())) {
+                    return false;
+                }
+            }
         }
 
         return verifySignature(ballot.signature(), ballot.answers(), election.publicKey().group());
@@ -63,7 +71,7 @@ public class VerifyBallot {
         var group = publicKey.group();
         var j = min;
         List<Ciphertext> abs = new ArrayList<>();
-        for (Proof proof : proofs) {
+        for (Proof proof: proofs) {
             var challenge = proof.challenge();
             var response = proof.response();
             var a1Num = group.g().modPow(response, group.p());
@@ -74,24 +82,24 @@ public class VerifyBallot {
             var bDenom = ct.beta().multiply(group.g().modInverse(group.p()).modPow(BigInteger.valueOf(j), group.p()))
                 .modPow(challenge, group.p());
             var b = bNum.multiply(bDenom.modInverse(group.p())).mod(group.p());
-                
+
             var ab = Ciphertext.builder().alpha(a).beta(b).build();
-            abs.add(ab);            
+            abs.add(ab);
             j++;
         }
 
         var message = String.format("prove|%s|%s,%s|", publicCred.toString(),
-        ct.alpha().toString(), ct.beta().toString());
-        for (Ciphertext ab : abs) {
+            ct.alpha().toString(), ct.beta().toString());
+        for (Ciphertext ab: abs) {
             message += (ab.alpha() + "," + ab.beta() + ",");
         }
         message = message.substring(0, message.length() - 1);
         var checksum = checksum(message, group.q());
 
-        var challengeSum = proofs.stream().map(Proof::challenge).reduce(BigInteger.ZERO, BigInteger::add).mod(group.q());
+        var challengeSum = proofs.stream().map(Proof::challenge).reduce(BigInteger.ZERO, BigInteger::add)
+            .mod(group.q());
         return checksum.equals(challengeSum);
     }
-
 
     public static boolean verifyVote(BigInteger alpha, BigInteger beta, BigInteger challenge0, BigInteger response0,
         BigInteger challenge1, BigInteger response1, BigInteger publicCred, WrappedPublicKey wrappedPublicKey) {
