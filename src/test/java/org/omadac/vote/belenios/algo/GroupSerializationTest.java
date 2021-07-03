@@ -2,14 +2,10 @@ package org.omadac.vote.belenios.algo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigInteger;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.junit.jupiter.api.Test;
 import org.omadac.vote.belenios.model.Group;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GroupSerializationTest {
 
