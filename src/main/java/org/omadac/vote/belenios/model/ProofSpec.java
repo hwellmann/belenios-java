@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize(builder = Proof.Builder.class)
+@JsonDeserialize
 public interface ProofSpec {
 
     BigInteger challenge();

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize(builder = SingleTrustee.Builder.class)
+@JsonDeserialize
 public interface SingleTrusteeSpec {
 
     String kind();

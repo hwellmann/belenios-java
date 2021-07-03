@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize(builder = Signature.Builder.class)
+@JsonDeserialize
 public interface SignatureSpec {
 
     @JsonProperty("public_key")

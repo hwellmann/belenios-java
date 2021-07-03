@@ -9,7 +9,7 @@ import org.immutables.annotate.InjectAnnotation.Where;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-@InjectAnnotation(type = RegisterForReflection.class, target = {Where.IMMUTABLE_TYPE, Where.BUILDER_TYPE})
+@InjectAnnotation(type = RegisterForReflection.class, target = { Where.IMMUTABLE_TYPE, Where.BUILDER_TYPE })
 @Retention(RUNTIME)
 public @interface InjectReflectionSupport {
 

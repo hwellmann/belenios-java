@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize(builder = Group.Builder.class)
+@JsonDeserialize
 public interface GroupSpec {
 
     BigInteger g();

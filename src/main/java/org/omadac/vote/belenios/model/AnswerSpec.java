@@ -11,7 +11,7 @@ import org.immutables.value.Value.Immutable;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize(builder = Answer.Builder.class)
+@JsonDeserialize
 public interface AnswerSpec {
 
     List<Ciphertext> choices();

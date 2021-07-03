@@ -10,7 +10,7 @@ import org.immutables.value.Value.Immutable;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize(builder = PartialDecryption.Builder.class)
+@JsonDeserialize
 public interface PartialDecryptionSpec {
 
     @JsonProperty("decryption_factors")
