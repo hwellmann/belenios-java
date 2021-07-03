@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize
+@JsonDeserialize(builder = TrusteePublicKey.Builder.class)
 public interface TrusteePublicKeySpec {
 
     Proof pok();

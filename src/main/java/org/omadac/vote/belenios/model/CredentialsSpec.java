@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize
+@JsonDeserialize(builder = Credentials.Builder.class)
 public interface CredentialsSpec {
 
     String privateCred();

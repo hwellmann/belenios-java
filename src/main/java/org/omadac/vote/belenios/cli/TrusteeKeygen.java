@@ -8,7 +8,6 @@ import java.util.concurrent.Callable;
 import org.omadac.vote.belenios.algo.GenTrusteeKey;
 import org.omadac.vote.belenios.algo.JsonMapper;
 import org.omadac.vote.belenios.model.Group;
-import org.omadac.vote.belenios.model.TrusteeKeyPair;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;

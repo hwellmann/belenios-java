@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize
+@JsonDeserialize(builder = Election.Builder.class)
 public interface ElectionSpec {
 
     String description();

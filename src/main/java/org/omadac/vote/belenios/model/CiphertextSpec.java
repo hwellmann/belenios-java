@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize
+@JsonDeserialize(builder = Ciphertext.Builder.class)
 public interface CiphertextSpec {
 
     static Ciphertext NEUTRAL = Ciphertext.builder().alpha(BigInteger.ONE).beta(BigInteger.ONE).build();

@@ -2,13 +2,13 @@ package org.omadac.vote.belenios.model;
 
 import java.math.BigInteger;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import org.immutables.value.Value.Immutable;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize
+@JsonDeserialize(builder = TrusteeKeyPair.Builder.class)
 public interface TrusteeKeyPairSpec {
 
     TrusteePublicKey trusteePublicKey();

@@ -3,7 +3,6 @@ package org.omadac.vote.belenios.cli;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.util.List;
@@ -47,7 +46,8 @@ public class Decrypt implements Callable<Integer> {
         var privKeyString = JsonMapper.INSTANCE.readValue(privkey, String.class);
         var election = JsonMapper.INSTANCE.readValue(electionFile, Election.class);
         var keyPair = GenTrusteeKey.deriveKeyPair(new BigInteger(privKeyString), election.publicKey().group());
-        Stream<Ballot> ballots = Files.lines(ballotsFile.toPath(), UTF_8).map(t -> JsonMapper.fromJson(t, Ballot.class));
+        Stream<Ballot> ballots = Files.lines(ballotsFile.toPath(), UTF_8)
+            .map(t -> JsonMapper.fromJson(t, Ballot.class));
         List<List<Ciphertext>> encryptedTally = CreateEncryptedTally.tally(election, ballots);
         var decryption = CreatePartialDecryption.decrypt(election, keyPair, encryptedTally);
         var json = JsonMapper.INSTANCE.writeValueAsString(decryption);

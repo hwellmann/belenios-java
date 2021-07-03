@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize
+@JsonDeserialize(builder = WrappedPublicKey.Builder.class)
 public interface WrappedPublicKeySpec {
 
     Group group();

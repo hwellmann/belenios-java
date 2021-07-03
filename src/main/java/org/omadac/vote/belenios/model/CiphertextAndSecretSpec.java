@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize
+@JsonDeserialize(builder = CiphertextAndSecret.Builder.class)
 public interface CiphertextAndSecretSpec {
 
     BigInteger alpha();

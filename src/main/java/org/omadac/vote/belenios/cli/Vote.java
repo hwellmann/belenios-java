@@ -1,7 +1,6 @@
 package org.omadac.vote.belenios.cli;
 
 import java.io.File;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.concurrent.Callable;
 import org.omadac.vote.belenios.algo.CreateBallot;
 import org.omadac.vote.belenios.algo.GenCredentials;
 import org.omadac.vote.belenios.algo.JsonMapper;
-import org.omadac.vote.belenios.model.Ballot;
 import org.omadac.vote.belenios.model.Credentials;
 import org.omadac.vote.belenios.model.Election;
 

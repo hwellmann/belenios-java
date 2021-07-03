@@ -3,14 +3,14 @@ package org.omadac.vote.belenios.model;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.immutables.value.Value.Immutable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import org.immutables.value.Value.Immutable;
-
 @Immutable
 @ValueStyle
-@JsonDeserialize
+@JsonDeserialize(builder = PartialDecryption.Builder.class)
 public interface PartialDecryptionSpec {
 
     @JsonProperty("decryption_factors")

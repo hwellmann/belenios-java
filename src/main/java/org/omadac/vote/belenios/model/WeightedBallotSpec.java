@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Immutable
 @ValueStyle
-@JsonDeserialize
+@JsonDeserialize(builder = WeightedBallot.Builder.class)
 public interface WeightedBallotSpec {
 
     int weight();

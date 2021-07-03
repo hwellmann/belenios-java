@@ -3,7 +3,6 @@ package org.omadac.vote.belenios.cli;
 import static java.util.stream.Collectors.toList;
 
 import java.io.File;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -85,10 +84,10 @@ public class Credgen implements Callable<Integer> {
             privCreds.append(id);
             privCreds.append(" ");
             privCreds.append(creds.privateCred());
-            privCreds.append("");
+            privCreds.append("\n");
 
             pubCreds.append(creds.publicCred());
-            pubCreds.append("");
+            pubCreds.append("\n");
         }
         Files.writeString(Paths.get(epochSecond + ".privcreds"), privCreds);
         Files.writeString(Paths.get(epochSecond + ".pubcreds"), pubCreds);
