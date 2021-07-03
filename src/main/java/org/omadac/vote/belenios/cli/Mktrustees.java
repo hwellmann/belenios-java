@@ -14,9 +14,8 @@ import org.omadac.vote.belenios.model.TrusteePublicKey;
 
 import picocli.CommandLine.Command;
 
-@Command(name = "mktrustees", mixinStandardHelpOptions = true, description = "This command reads public_keys.jsons and threshold.json (if any). It\n"
-    + "then generates an trustees.json file.\n"
-    + "\n\n")
+@Command(name = "mktrustees", mixinStandardHelpOptions = true, description = "Reads public_keys.jsons and threshold.json (if any) " 
+    + "and generates a trustees.json file.\n\n")
 public class Mktrustees implements Callable<Integer> {
 
     private List<Object> toSingleTrustee(TrusteePublicKey publicKey) {

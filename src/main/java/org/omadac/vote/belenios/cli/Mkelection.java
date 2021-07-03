@@ -15,8 +15,8 @@ import org.omadac.vote.belenios.model.WrappedPublicKey;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "mkelection", mixinStandardHelpOptions = true, description = "This command reads and checks public_keys.jsons (or threshold.json if\n"
-    + "it exists). It then computes the global election public key and\n"
+@Command(name = "mkelection", mixinStandardHelpOptions = true, description = "Reads and checks public_keys.jsons (or threshold.json if "
+    + "it exists). It then computes the global election public key and "
     + "generates an election.json file.\n\n")
 public class Mkelection implements Callable<Integer> {
 

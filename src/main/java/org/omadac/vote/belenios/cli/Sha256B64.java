@@ -6,7 +6,7 @@ import java.util.concurrent.Callable;
 
 import picocli.CommandLine.Command;
 
-@Command(name = "sha256-b64", mixinStandardHelpOptions = true, description = "compute SHA256 of standard input and encode it in Base64Compact\n\n")
+@Command(name = "sha256-b64", mixinStandardHelpOptions = true, description = "Computes SHA256 of standard input and encodes it in Base64Compact\n\n")
 public class Sha256B64 implements Callable<Integer> {
 
     @Override

@@ -5,7 +5,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @TopCommand
-@Command(name = "belenios-tool", mixinStandardHelpOptions = true, versionProvider = VersionProvider.class, description = "election management tool", subcommands = {
+@Command(name = "belenios-tool", mixinStandardHelpOptions = true, versionProvider = VersionProvider.class, description = "Election management tool", subcommands = {
     Credgen.class,
     Decrypt.class,
     GenerateToken.class,

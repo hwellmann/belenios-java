@@ -19,7 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "vote", mixinStandardHelpOptions = true, description = "This command creates a ballot and prints it on standard output.\n\n")
+@Command(name = "vote", mixinStandardHelpOptions = true, description = "Creates a ballot and prints it on standard output.\n\n")
 public class Vote implements Callable<Integer> {
 
     @Option(names = {"--ballot"}, description = "Read ballot choices from file BALLOT", required = true)
@@ -39,14 +39,14 @@ public class Vote implements Callable<Integer> {
             return 1;
         }
         List<List<Integer>> rawVotes = JsonMapper.INSTANCE.readValue(ballot, new TypeReference<>() {});
-        String privcred = Files.readString(ballot.toPath(), StandardCharsets.UTF_8).trim();
-        Election election = JsonMapper.INSTANCE.readValue(new File("election.json"), Election.class);
-        BigInteger pubCred = GenCredentials.derive(privcred, election.uuid(), election.publicKey().group());
+        var privcred = Files.readString(ballot.toPath(), StandardCharsets.UTF_8).trim();
+        var election = JsonMapper.INSTANCE.readValue(new File("election.json"), Election.class);
+        var pubCred = GenCredentials.derive(privcred, election.uuid(), election.publicKey().group());
 
-        Credentials credentials = Credentials.builder().privateCred(privcred).publicCred(pubCred).build();
+        var credentials = Credentials.builder().privateCred(privcred).publicCred(pubCred).build();
 
-        Ballot ballot = CreateBallot.createBallot(election, credentials, rawVotes);
-        String json = JsonMapper.INSTANCE.writeValueAsString(ballot);
+        var ballot = CreateBallot.createBallot(election, credentials, rawVotes);
+        var json = JsonMapper.INSTANCE.writeValueAsString(ballot);
         System.out.println(json);
         return 0;
     }

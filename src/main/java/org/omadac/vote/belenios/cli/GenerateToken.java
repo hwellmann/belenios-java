@@ -8,7 +8,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.Option;
 
-@Command(name = "generate-token", mixinStandardHelpOptions = true, description = "This command generates a random token suitable for an election identifier.")
+@Command(name = "generate-token", mixinStandardHelpOptions = true, description = "Generates a random token suitable for an election identifier.\n\n")
 public class GenerateToken implements Callable<Integer> {
 
     @Option(names = {"-l",

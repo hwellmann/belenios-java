@@ -20,7 +20,7 @@ import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "credgen", mixinStandardHelpOptions = true, description = "This command is run by a credential authority to generate credentials"
+@Command(name = "credgen", mixinStandardHelpOptions = true, description = "Run by a credential authority to generate credentials "
     + "for a specific election. The generated private credentials are stored "
     + "in T.privcreds, where T is a timestamp. T.privcreds contains one "
     + "credential per line. Each voter must be sent a credential, and "

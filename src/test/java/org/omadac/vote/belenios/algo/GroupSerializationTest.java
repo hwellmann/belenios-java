@@ -16,15 +16,10 @@ public class GroupSerializationTest {
     @Test
     public void shouldSerialize() throws JsonProcessingException {
         var group = Groups.HOMOMORPHIC;
-        var mapper = new ObjectMapper();
-
-        mapper.configOverride(BigInteger.class)
-            .setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.STRING));
-
-        var json = mapper.writeValueAsString(group);
+        var json = JsonMapper.INSTANCE.writeValueAsString(group);
         assertThat(json).startsWith("{\"g\":\"2402");
 
-        var group2 = mapper.readValue(json, Group.class);
+        var group2 = JsonMapper.INSTANCE.readValue(json, Group.class);
         assertThat(group2).isEqualTo(group);
     }
 }

@@ -21,7 +21,7 @@ import org.omadac.vote.belenios.model.Election;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "decrypt", mixinStandardHelpOptions = true, description = "This command is run by each trustee to perform a partial decryption.\n\n")
+@Command(name = "decrypt", mixinStandardHelpOptions = true, description = "Run by each trustee to perform a partial decryption.\n\n")
 public class Decrypt implements Callable<Integer> {
 
     @Option(names = {"--privkey"}, description = "Read private key from file PRIV_KEY", required = true)
