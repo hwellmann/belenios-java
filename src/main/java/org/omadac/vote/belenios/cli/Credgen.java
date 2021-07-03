@@ -20,12 +20,12 @@ import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "credgen", mixinStandardHelpOptions = true, description = "This command is run by a credential authority to generate credentials\n"
-    + "for a specific election. The generated private credentials are stored\n"
-    + "in T.privcreds, where T is a timestamp. T.privcreds contains one\n"
-    + "credential per line. Each voter must be sent a credential, and\n"
-    + "T.privcreds must be destroyed after dispatching is done. The\n"
-    + "associated public keys are stored in T.pubcreds and must be sent to\n"
+@Command(name = "credgen", mixinStandardHelpOptions = true, description = "This command is run by a credential authority to generate credentials"
+    + "for a specific election. The generated private credentials are stored "
+    + "in T.privcreds, where T is a timestamp. T.privcreds contains one "
+    + "credential per line. Each voter must be sent a credential, and "
+    + "T.privcreds must be destroyed after dispatching is done. The "
+    + "associated public keys are stored in T.pubcreds and must be sent to "
     + "the election administrator.\n\n")
 public class Credgen implements Callable<Integer> {
 
@@ -85,10 +85,10 @@ public class Credgen implements Callable<Integer> {
             privCreds.append(id);
             privCreds.append(" ");
             privCreds.append(creds.privateCred());
-            privCreds.append("\n");
+            privCreds.append("");
 
             pubCreds.append(creds.publicCred());
-            pubCreds.append("\n");
+            pubCreds.append("");
         }
         Files.writeString(Paths.get(epochSecond + ".privcreds"), privCreds);
         Files.writeString(Paths.get(epochSecond + ".pubcreds"), pubCreds);

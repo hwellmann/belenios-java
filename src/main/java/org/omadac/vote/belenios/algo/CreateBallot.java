@@ -17,7 +17,6 @@ import java.util.stream.Stream;
 import org.graalvm.collections.Pair;
 import org.omadac.vote.belenios.model.Answer;
 import org.omadac.vote.belenios.model.Ballot;
-import org.omadac.vote.belenios.model.Ballot.Builder;
 import org.omadac.vote.belenios.model.Ciphertext;
 import org.omadac.vote.belenios.model.CiphertextAndSecret;
 import org.omadac.vote.belenios.model.Credentials;
@@ -34,18 +33,17 @@ public class CreateBallot {
         if (election.questions().size() != rawVotes.size()) {
             throw new IllegalArgumentException("Incorrect number of answers");
         }
-        Builder builder = Ballot.builder();
         List<Answer> answers = new ArrayList<>();
         for (int i = 0; i < rawVotes.size(); i++) {
             var question = election.questions().get(i);
             var rawVote = rawVotes.get(i);
             var answer = createAnswer(election.publicKey(), credentials.publicCred(), question, rawVote);
             answers.add(answer);
-            builder.addAnswer(answer);
         }
         Signature signature = createSignature(answers, credentials, election);
 
-        return builder
+        return Ballot.builder()
+            .answers(answers)
             .electionUuid(election.uuid())
             .electionHash(createElectionHash(election))
             .signature(signature)
