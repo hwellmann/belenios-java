@@ -79,7 +79,12 @@ public class Credgen implements Callable<Integer> {
         var privCreds = new StringBuilder();
         var pubCreds = new StringBuilder();
         for (int i = 0; i < ids.size(); i++) {
+            String weight = null;
             String id = ids.get(i);
+            String[] parts = id.split(",");
+            if (parts.length == 3) {
+                weight = parts[2];
+            }
             Credentials creds = credentials.get(i);
             privCreds.append(id);
             privCreds.append(" ");
@@ -87,6 +92,10 @@ public class Credgen implements Callable<Integer> {
             privCreds.append("\n");
 
             pubCreds.append(creds.publicCred());
+            if (weight != null) {
+                pubCreds.append(",");
+                pubCreds.append(weight);
+            }
             pubCreds.append("\n");
         }
         Files.writeString(Paths.get(epochSecond + ".privcreds"), privCreds);

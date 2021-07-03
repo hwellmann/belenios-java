@@ -37,11 +37,11 @@ public class Vote implements Callable<Integer> {
             return 1;
         }
         List<List<Integer>> rawVotes = JsonMapper.INSTANCE.readValue(ballot, new TypeReference<>() {});
-        var privcred = Files.readString(ballot.toPath(), StandardCharsets.UTF_8).trim();
+        var privateCred = Files.readString(privcred.toPath(), StandardCharsets.UTF_8).trim();
         var election = JsonMapper.INSTANCE.readValue(new File("election.json"), Election.class);
-        var pubCred = GenCredentials.derive(privcred, election.uuid(), election.publicKey().group());
+        var pubCred = GenCredentials.derive(privateCred, election.uuid(), election.publicKey().group());
 
-        var credentials = Credentials.builder().privateCred(privcred).publicCred(pubCred).build();
+        var credentials = Credentials.builder().privateCred(privateCred).publicCred(pubCred).build();
 
         var ballot = CreateBallot.createBallot(election, credentials, rawVotes);
         var json = JsonMapper.INSTANCE.writeValueAsString(ballot);
