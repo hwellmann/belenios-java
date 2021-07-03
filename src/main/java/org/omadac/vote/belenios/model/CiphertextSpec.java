@@ -16,4 +16,10 @@ public interface CiphertextSpec {
     BigInteger alpha();
 
     BigInteger beta();
+
+    default Ciphertext combine(Ciphertext other, BigInteger p) {
+        var alpha = alpha().multiply(other.alpha()).mod(p);
+        var beta = beta().multiply(other.beta()).mod(p);
+        return Ciphertext.builder().alpha(alpha).beta(beta).build();
+    }
 }

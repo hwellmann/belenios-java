@@ -64,7 +64,8 @@ public class CreateBallot {
         var proofs = choicesAndProofs.stream().map(Pair::getRight).collect(toList());
 
         var ct0 = choicesAndSecrets.get(0);
-        var ctSigma = sum(choicesAndSecrets, publicKey.group().p());
+        var ctSigma = choicesAndSecrets.stream().skip(1)
+            .reduce((left, right) -> left.combine(right, publicKey.group().p())).get();
 
         var prefix = Stream
             .of(publicKey.group().g(), publicKey.y(), ct0.alpha(), ct0.beta(), ctSigma.alpha(), ctSigma.beta())
@@ -99,22 +100,6 @@ public class CreateBallot {
         var ct = CiphertextAndSecret.builder().alpha(alpha).beta(beta).r(r).build();
         List<Proof> proofs = createIntervalProof(publicKey, publicCred, ct, rawVote, 0, 1);
         return Pair.create(ct, proofs);
-    }
-
-    private static CiphertextAndSecret sum(List<CiphertextAndSecret> cts, BigInteger p) {
-        var alpha = BigInteger.ONE;
-        var beta = BigInteger.ONE;
-        var r = BigInteger.ZERO;
-        for (int i = 1; i < cts.size(); i++) {
-            alpha = alpha.multiply(cts.get(i).alpha()).mod(p);
-            beta = beta.multiply(cts.get(i).beta()).mod(p);
-            r = r.add(cts.get(i).r()).mod(p);
-        }
-        return CiphertextAndSecret.builder()
-            .alpha(alpha)
-            .beta(beta)
-            .r(r)
-            .build();
     }
 
     private static void validateRawVote(Question question, List<Integer> rawVote) {
