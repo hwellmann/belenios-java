@@ -17,6 +17,7 @@ import org.omadac.vote.belenios.model.TrusteePublicKey;
 
 public class TrusteeKeyTest {
 
+    private static final String DIR = "src/test/resources/4BmyrdywTpwJry";
     private Group group = Groups.HOMOMORPHIC;
 
     @Test
@@ -50,7 +51,7 @@ public class TrusteeKeyTest {
 
     @Test
     public void readJsonString() throws IOException {
-        var key = JsonMapper.INSTANCE.readValue(new File("84BDB61F.privkey"), String.class);
-        assertThat(key).isEqualTo("24628282804907613543532348967256494707708964340889825523333532660383941806827");
+        var key = JsonMapper.INSTANCE.readValue(new File(DIR, "8A687CA2.privkey"), String.class);
+        assertThat(key).isEqualTo("45808391183982415395165525244185134133799101543379447681158860342942626483434");
     }
 }
