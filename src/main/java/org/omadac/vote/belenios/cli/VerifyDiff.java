@@ -6,7 +6,7 @@ import java.util.concurrent.Callable;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "verify-diff", mixinStandardHelpOptions = true, description = "noop\n\n")
+@Command(name = "verify-diff", mixinStandardHelpOptions = true, description = "noop\n")
 public class VerifyDiff implements Callable<Integer> {
 
     @Option(names = {"--dir1"})

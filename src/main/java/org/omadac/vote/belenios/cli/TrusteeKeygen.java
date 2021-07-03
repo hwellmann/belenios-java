@@ -19,7 +19,7 @@ import picocli.CommandLine.Option;
     + "a name that starts with ID, where ID is a short fingerprint of the "
     + "public key. The private key is stored in ID.privkey and must be "
     + "secured by the trustee. The public key is stored in ID.pubkey and must "
-    + "be sent to the election administrator.\n\n")
+    + "be sent to the election administrator.\n")
 public class TrusteeKeygen implements Callable<Integer> {
 
     @Option(names = {"--group"}, description = "Take group parameters from file GROUP", required = true)
@@ -27,11 +27,11 @@ public class TrusteeKeygen implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        Group g = JsonMapper.INSTANCE.readValue(group, Group.class);
-        TrusteeKeyPair keyPair = GenTrusteeKey.genKeyPair(g);
-        String privKey = String.format("\"%s\"\n", keyPair.privateKey());
+        var g = JsonMapper.INSTANCE.readValue(group, Group.class);
+        var keyPair = GenTrusteeKey.genKeyPair(g);
+        var privKey = String.format("\"%s\"\n", keyPair.privateKey());
         Files.writeString(Paths.get(keyPair.id() + ".privkey"), privKey);
-        String json = JsonMapper.INSTANCE.writeValueAsString(keyPair.trusteePublicKey());
+        var json = JsonMapper.INSTANCE.writeValueAsString(keyPair.trusteePublicKey());
         Files.writeString(Paths.get(keyPair.id() + ".pubkey"), json + "\n");
 
         return 0;

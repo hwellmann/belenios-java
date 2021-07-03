@@ -26,7 +26,7 @@ import picocli.CommandLine.Option;
     + "credential per line. Each voter must be sent a credential, and "
     + "T.privcreds must be destroyed after dispatching is done. The "
     + "associated public keys are stored in T.pubcreds and must be sent to "
-    + "the election administrator.\n\n")
+    + "the election administrator.\n")
 public class Credgen implements Callable<Integer> {
 
     @Option(names = {"--group"}, description = "Take group parameters from file GROUP", required = true)
@@ -54,10 +54,10 @@ public class Credgen implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        Group g = JsonMapper.INSTANCE.readValue(group, Group.class);
+        var g = JsonMapper.INSTANCE.readValue(group, Group.class);
 
         if (exclusive.privCred != null) {
-            BigInteger publicKey = GenCredentials.derive(exclusive.privCred, uuid, g);
+            var publicKey = GenCredentials.derive(exclusive.privCred, uuid, g);
             System.out.println(publicKey);
             return 0;
         }
@@ -75,7 +75,7 @@ public class Credgen implements Callable<Integer> {
         List<Credentials> credentials = ids.stream()
             .filter(id -> !id.isBlank())
             .map(id -> GenCredentials.generate(uuid, g)).collect(toList());
-        long epochSecond = Instant.now().getEpochSecond();
+        var epochSecond = Instant.now().getEpochSecond();
 
         var privCreds = new StringBuilder();
         var pubCreds = new StringBuilder();

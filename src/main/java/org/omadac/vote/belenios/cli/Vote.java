@@ -19,7 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "vote", mixinStandardHelpOptions = true, description = "Creates a ballot and prints it on standard output.\n\n")
+@Command(name = "vote", mixinStandardHelpOptions = true, description = "Creates a ballot and prints it on standard output.\n")
 public class Vote implements Callable<Integer> {
 
     @Option(names = {"--ballot"}, description = "Read ballot choices from file BALLOT", required = true)

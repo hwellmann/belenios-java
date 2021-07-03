@@ -21,19 +21,11 @@ import org.omadac.vote.belenios.model.Election;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "decrypt", mixinStandardHelpOptions = true, description = "Run by each trustee to perform a partial decryption.\n\n")
+@Command(name = "decrypt", mixinStandardHelpOptions = true, description = "Run by each trustee to perform a partial decryption.\n")
 public class Decrypt implements Callable<Integer> {
 
     @Option(names = {"--privkey"}, description = "Read private key from file PRIV_KEY", required = true)
     private File privkey;
-
-    private Ballot toBallot(String line) {
-        try {
-            return JsonMapper.INSTANCE.readValue(line, Ballot.class);
-        } catch (IOException exc) {
-            throw new IllegalArgumentException("Cannot parse ballot", exc);
-        }
-    }
 
     @Override
     public Integer call() throws Exception {
@@ -55,7 +47,7 @@ public class Decrypt implements Callable<Integer> {
         var privKeyString = JsonMapper.INSTANCE.readValue(privkey, String.class);
         var election = JsonMapper.INSTANCE.readValue(electionFile, Election.class);
         var keyPair = GenTrusteeKey.deriveKeyPair(new BigInteger(privKeyString), election.publicKey().group());
-        Stream<Ballot> ballots = Files.lines(ballotsFile.toPath(), UTF_8).map(this::toBallot);
+        Stream<Ballot> ballots = Files.lines(ballotsFile.toPath(), UTF_8).map(t -> JsonMapper.fromJson(t, Ballot.class));
         List<List<Ciphertext>> encryptedTally = CreateEncryptedTally.tally(election, ballots);
         var decryption = CreatePartialDecryption.decrypt(election, keyPair, encryptedTally);
         var json = JsonMapper.INSTANCE.writeValueAsString(decryption);

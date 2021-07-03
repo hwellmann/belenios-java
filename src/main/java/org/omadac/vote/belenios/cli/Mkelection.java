@@ -17,7 +17,7 @@ import picocli.CommandLine.Option;
 
 @Command(name = "mkelection", mixinStandardHelpOptions = true, description = "Reads and checks public_keys.jsons (or threshold.json if "
     + "it exists). It then computes the global election public key and "
-    + "generates an election.json file.\n\n")
+    + "generates an election.json file.\n")
 public class Mkelection implements Callable<Integer> {
 
     @Option(names = {"--group"}, description = "Take group parameters from file GROUP", required = true)
@@ -26,20 +26,19 @@ public class Mkelection implements Callable<Integer> {
     @Option(names = {"--uuid"}, description = "UUID of the election", required = true)
     private String uuid;
 
-    @Option(names = {
-        "--template"}, description = "Read identities from FILE. One credential will be generated for each line of FILE", required = true)
+    @Option(names = {"--template"}, description = "Read identities from FILE. One credential will be generated for each line of FILE", required = true)
     private File template;
 
     @Override
     public Integer call() throws Exception {
-        Group g = JsonMapper.INSTANCE.readValue(group, Group.class);
-        Election election = JsonMapper.INSTANCE.readValue(template, Election.class);
+        var g = JsonMapper.INSTANCE.readValue(group, Group.class);
+        var election = JsonMapper.INSTANCE.readValue(template, Election.class);
         List<TrusteePublicKey> trustees = Trustees.readTrustees(new File("trustees.json"));
-        BigInteger y = trustees.stream()
+        var y = trustees.stream()
             .map(pk -> pk.publicKey())
             .reduce(BigInteger.ONE, BigInteger::multiply)
             .mod(g.p());
-        WrappedPublicKey publicKey = WrappedPublicKey.builder().y(y).group(g).build();
+        var publicKey = WrappedPublicKey.builder().y(y).group(g).build();
         election = election.withPublicKey(publicKey).withUuid(uuid);
         JsonMapper.INSTANCE.writeValue(new File("election.json"), election);
         return 0;

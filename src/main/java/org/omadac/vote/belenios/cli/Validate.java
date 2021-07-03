@@ -20,9 +20,9 @@ import picocli.CommandLine.Command;
 
 @Command(name = "validate", mixinStandardHelpOptions = true, description = "Reads partial decryptions done by trustees from file "
     + "partial_decryptions.jsons, checks them, combines them into the final "
-    + "tally and prints the result to standard output.\n\n"
+    + "tally and prints the result to standard output.\n"
     + "The result structure contains partial decryptions itself, so "
-    + "partial_decryptions.jsons can be discarded afterwards.\n\n")
+    + "partial_decryptions.jsons can be discarded afterwards.\n")
 public class Validate implements Callable<Integer> {
 
     public static boolean checkFiles(File... files) {
