@@ -18,6 +18,20 @@
             "projectName": "belenios",
             "args": "validate",
             "cwd": "${workspaceFolder}/src/test/resources/4BmyrdywTpwJry"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Jest: Run current File",
+            "program": "${workspaceFolder}/frontend/node_modules/.bin/jest",
+            "cwd" : "${workspaceFolder}/frontend",
+            "args": [
+                "--testMatch",
+                "**/${relativeFile}"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true
         }
     ]
 }

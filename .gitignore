@@ -12,3 +12,4 @@ test-output
 *.iml
 dist/
 build/
+node_modules

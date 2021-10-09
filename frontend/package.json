@@ -1,0 +1,24 @@
+{
+  "name": "belenios-frontend",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/tsc/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "jsbn": "^1.1.0",
+    "sjcl": "^1.0.8"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "@types/jsbn": "^1.2.29",
+    "@types/sjcl": "^1.0.29",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.3",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.5"
+  }
+}
