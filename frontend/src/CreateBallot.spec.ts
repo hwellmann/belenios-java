@@ -24,6 +24,6 @@ describe('CreateBallot', () => {
 
     test('should create vote', () => {
         const ballot = createBallot(election, credentials, [[0, 1, 0]]);
-        console.log(JSON.stringify(ballot, replaceBallot));
+        console.log(JSON.stringify(ballot, replaceBallot, 4));
     });
 });

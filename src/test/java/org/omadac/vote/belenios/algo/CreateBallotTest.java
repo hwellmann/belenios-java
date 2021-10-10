@@ -10,15 +10,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.omadac.vote.belenios.model.Ballot;
-import org.omadac.vote.belenios.model.Credentials;
-import org.omadac.vote.belenios.model.Election;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.omadac.vote.belenios.model.Ballot;
+import org.omadac.vote.belenios.model.Credentials;
+import org.omadac.vote.belenios.model.Election;
 
 public class CreateBallotTest {
 
@@ -26,6 +28,16 @@ public class CreateBallotTest {
     private BigInteger publicCred = new BigInteger(
         "10029862746834958143319323111454409387590534954793044404822945369994744260442089371115262190203934804675786564182282779251355216210946054924334240642428855729296421330257013472191135818728983762408033399214480787226293273548568201935296926228677329878383724409798063156434251931695634528137005735620183893704077873291267277770009834510370291772787286847855329543445255587222293360124381540329014428549828158233880255987012301417548047705955061799010400287887972369638914661074191768045129220621711681227211225478992052827599600084274797905069932956260221255187797967125498373990647751773001873864960847565145552988003");
     private Credentials credentials = Credentials.builder().privateCred(secretCred).publicCred(publicCred).build();
+    private ObjectMapper mapper = new ObjectMapper();
+
+    @BeforeEach
+    public void before() {
+
+        mapper.configOverride(BigInteger.class)
+            .setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.STRING));
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+    }
 
     @Test
     public void shouldCreateBallot() throws Exception {
@@ -36,10 +48,6 @@ public class CreateBallotTest {
     }
 
     private Election readElection() throws IOException, JsonProcessingException, JsonMappingException {
-        var mapper = new ObjectMapper();
-
-        mapper.configOverride(BigInteger.class)
-            .setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.STRING));
 
         var json = Files.readString(Paths.get("src/test/resources/election01/election.json"));
         var election = mapper.readValue(json, Election.class);
@@ -47,11 +55,6 @@ public class CreateBallotTest {
     }
 
     private Ballot readBallot() throws IOException, JsonProcessingException, JsonMappingException {
-        var mapper = new ObjectMapper();
-
-        mapper.configOverride(BigInteger.class)
-            .setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.STRING));
-
         var json = Files.readString(Paths.get("src/test/resources/election01/ballot.json"));
         var election = mapper.readValue(json, Ballot.class);
         return election;

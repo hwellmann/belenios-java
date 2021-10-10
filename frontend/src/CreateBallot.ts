@@ -112,7 +112,7 @@ function createIntervalProof(publicKey: WrappedPublicKey, publicCred: BigInteger
             const bDenom = ct.beta.multiply(group.g.modInverse(group.p).modPow(new BigInteger(j.toString()), group.p))
                 .modPow(challenge, group.p);
             const b = bNum.multiply(bDenom.modInverse(group.p)).mod(group.p);
-            abs.push({a, b});    
+            abs.push({alpha: a, beta: b});    
         }
     }
 
@@ -160,7 +160,7 @@ function createBlankProof(publicKey: WrappedPublicKey, publicCred: BigInteger,
         const cs = checksum(message, group.q);
 
         const challenge0 = cs.subtract(challengeSigma).mod(group.q);
-        const response0 = w.subtract(ctSigma.r.multiply(challenge0)).mod(group.q);
+        const response0 = w.subtract(ct0.r.multiply(challenge0)).mod(group.q);
         const proof0 = { challenge: challenge0, response: response0 };
         const proofSigma = { challenge: challengeSigma, response: responseSigma };
         return [ proof0, proofSigma ];
