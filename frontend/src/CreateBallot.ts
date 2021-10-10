@@ -1,4 +1,4 @@
-import { addCts, Answer, Ballot, CiphertextAndSecret, Credentials, Election, Proof, Question, replaceElection, WrappedPublicKey } from './Model';
+import { addCts, Answer, Ballot, Ciphertext, CiphertextAndSecret, Credentials, Election, Proof, Question, replaceElection, WrappedPublicKey } from './Model';
 import { toSecretKey } from './GenCredentials';
 import { random } from './GenRandomInteger';
 import { checksum } from './ModularChecksum';
@@ -89,7 +89,7 @@ function createCiphertext(publicKey: WrappedPublicKey, publicCred: BigInteger, r
 function createIntervalProof(publicKey: WrappedPublicKey, publicCred: BigInteger, 
     ct: CiphertextAndSecret, choice: number, min: number, max: number): Proof[] {
     const proofs: Proof[] = [];
-    const abs = [];
+    const abs: Ciphertext[] = [];
     const group = publicKey.group;
     for (var j: number = min; j <= max; j++) {
         if (j === choice) {
@@ -122,11 +122,10 @@ function createIntervalProof(publicKey: WrappedPublicKey, publicCred: BigInteger
     const bi = publicKey.y.modPow(w, group.p);
     abs[i] = { alpha: ai, beta: bi };
 
-    let message = `prove|${publicCred.toString()}|${ct.alpha.toString()},${ct.beta.toString()}|`;
-    for (const ab of abs) {
-       message += `${ab.alpha},${ab.beta},`; 
-    }
-    message = message.slice(0, -1);
+    const suffix = abs.flatMap(ab => [ab.alpha, ab.beta])
+        .map(bi => bi.toString())
+        .join(',');
+    let message = `prove|${publicCred.toString()}|${ct.alpha.toString()},${ct.beta.toString()}|${suffix}`;
     const cs = checksum(message, group.q);
 
     const challengeSum = proofs.map(p => p.challenge).reduce((left, right) => left.add(right));

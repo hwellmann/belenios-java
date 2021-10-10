@@ -1,5 +1,6 @@
 package org.omadac.vote.belenios.algo;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.omadac.vote.belenios.algo.ModularChecksum.checksum;
 
@@ -156,12 +157,13 @@ public class CreateBallot {
         var abi = Ciphertext.builder().alpha(ai).beta(bi).build();
         abs.set(i, abi);
 
-        var message = String.format("prove|%s|%s,%s|", publicCred.toString(),
-            ct.alpha().toString(), ct.beta().toString());
-        for (Ciphertext ab: abs) {
-            message += (ab.alpha() + "," + ab.beta() + ",");
-        }
-        message = message.substring(0, message.length() - 1);
+        var suffix = abs.stream()
+            .flatMap(ab -> Stream.of(ab.alpha(), ab.beta()))
+            .map(BigInteger::toString)
+            .collect(joining(","));
+
+        var message = String.format("prove|%s|%s,%s|%s", publicCred.toString(),
+            ct.alpha().toString(), ct.beta().toString(), suffix);
         var checksum = checksum(message, group.q());
 
         var challengeSum = proofs.stream().map(Proof::challenge).reduce(BigInteger.ZERO, BigInteger::add);
@@ -175,7 +177,7 @@ public class CreateBallot {
 
     private static List<Proof> createBlankProof(WrappedPublicKey publicKey, BigInteger publicCred,
         CiphertextAndSecret ct0, CiphertextAndSecret ctSigma,
-        int isBlank, String P) {
+        int isBlank, String prefix) {
         var group = publicKey.group();
 
         if (isBlank == 0) {
@@ -191,7 +193,7 @@ public class CreateBallot {
             var a0 = group.g().modPow(w, group.p());
             var b0 = publicKey.y().modPow(w, group.p());
 
-            var message = String.format("bproof0|%s|%s|%s,%s,%s,%s", publicCred, P, a0, b0, aSigma, bSigma);
+            var message = String.format("bproof0|%s|%s|%s,%s,%s,%s", publicCred, prefix, a0, b0, aSigma, bSigma);
             var checksum = checksum(message, group.q());
 
             var challenge0 = checksum.subtract(challengeSigma).mod(group.q());
@@ -213,7 +215,7 @@ public class CreateBallot {
             var aSigma = group.g().modPow(w, group.p());
             var bSigma = publicKey.y().modPow(w, group.p());
 
-            String message = String.format("bproof0|%s|%s|%s,%s,%s,%s", publicCred, P, a0, b0, aSigma, bSigma);
+            String message = String.format("bproof0|%s|%s|%s,%s,%s,%s", publicCred, prefix, a0, b0, aSigma, bSigma);
             var checksum = checksum(message, group.q());
 
             var challengeSigma = checksum.subtract(challenge0).mod(group.q());
