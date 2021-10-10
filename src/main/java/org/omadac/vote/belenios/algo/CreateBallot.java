@@ -80,7 +80,8 @@ public class CreateBallot {
                 .overallProof(createOverallProof(publicKey, publicCred, ct0, ctSigma, rawVote.get(0), prefix));
         } else {
             Integer choice = rawVote.stream().reduce(0, Integer::sum);
-            builder.overallProof(createIntervalProof(publicKey, publicCred, ctSigma, choice, question.min(), question.max()));
+            builder.overallProof(
+                createIntervalProof(publicKey, publicCred, ctSigma, choice, question.min(), question.max()));
         }
         return builder.build();
     }
@@ -139,12 +140,13 @@ public class CreateBallot {
                 var a = a1Num.multiply(aDenom.modInverse(group.p())).mod(group.p());
 
                 var bNum = publicKey.y().modPow(response, group.p());
-                var bDenom = ct.beta().multiply(group.g().modInverse(group.p()).modPow(BigInteger.valueOf(j), group.p()))
+                var bDenom = ct.beta()
+                    .multiply(group.g().modInverse(group.p()).modPow(BigInteger.valueOf(j), group.p()))
                     .modPow(challenge, group.p());
                 var b = bNum.multiply(bDenom.modInverse(group.p())).mod(group.p());
-                
+
                 var ab = Ciphertext.builder().alpha(a).beta(b).build();
-                abs.add(ab);            
+                abs.add(ab);
             }
         }
         int i = choice - min;
@@ -155,8 +157,8 @@ public class CreateBallot {
         abs.set(i, abi);
 
         var message = String.format("prove|%s|%s,%s|", publicCred.toString(),
-        ct.alpha().toString(), ct.beta().toString());
-        for (Ciphertext ab : abs) {
+            ct.alpha().toString(), ct.beta().toString());
+        for (Ciphertext ab: abs) {
             message += (ab.alpha() + "," + ab.beta() + ",");
         }
         message = message.substring(0, message.length() - 1);
@@ -167,8 +169,8 @@ public class CreateBallot {
         var responsei = challengei.multiply(ct.r()).add(w).mod(group.q());
         var proofi = Proof.builder().challenge(challengei).response(responsei).build();
         proofs.set(i, proofi);
-            
-        return proofs;    
+
+        return proofs;
     }
 
     private static List<Proof> createBlankProof(WrappedPublicKey publicKey, BigInteger publicCred,

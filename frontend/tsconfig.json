@@ -5,6 +5,9 @@
         "sourceMap": true,
         "declaration": true,
         "target": "ES5",
+        "lib": [
+            "es2019"
+        ],        
         "typeRoots": [
             "node_modules/@types"
         ],

@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.omadac.vote.belenios.model.Ballot;
 import org.omadac.vote.belenios.model.Credentials;
 import org.omadac.vote.belenios.model.Election;
 
@@ -45,11 +46,37 @@ public class CreateBallotTest {
         return election;
     }
 
+    private Ballot readBallot() throws IOException, JsonProcessingException, JsonMappingException {
+        var mapper = new ObjectMapper();
+
+        mapper.configOverride(BigInteger.class)
+            .setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.STRING));
+
+        var json = Files.readString(Paths.get("src/test/resources/election01/ballot.json"));
+        var election = mapper.readValue(json, Ballot.class);
+        return election;
+    }
+
     @Test
     public void shouldCreateBlankBallot() throws Exception {
         var election = readElection();
 
         var ballot = createBallot(election, credentials, List.of(List.of(1, 0, 0)));
+        assertThat(verifyBallot(ballot, election)).isTrue();
+    }
+
+    @Test
+    public void shouldCreateElectionHash() throws Exception {
+        var election = readElection();
+        var hash = CreateBallot.createElectionHash(election);
+        System.out.println(hash);
+    }
+
+    @Test
+    public void shouldVerifyBallot() throws Exception {
+        var election = readElection();
+
+        var ballot = readBallot();
         assertThat(verifyBallot(ballot, election)).isTrue();
     }
 }
