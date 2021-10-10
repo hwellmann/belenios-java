@@ -54,8 +54,8 @@ public class CreateBallotTest {
         return election;
     }
 
-    private Ballot readBallot() throws IOException, JsonProcessingException, JsonMappingException {
-        var json = Files.readString(Paths.get("src/test/resources/election01/ballot.json"));
+    private Ballot readBallot(String fileName) throws IOException, JsonProcessingException, JsonMappingException {
+        var json = Files.readString(Paths.get("src/test/resources/election01/", fileName));
         var election = mapper.readValue(json, Ballot.class);
         return election;
     }
@@ -79,7 +79,15 @@ public class CreateBallotTest {
     public void shouldVerifyBallot() throws Exception {
         var election = readElection();
 
-        var ballot = readBallot();
+        var ballot = readBallot("ballot.json");
+        assertThat(verifyBallot(ballot, election)).isTrue();
+    }
+
+    @Test
+    public void shouldVerifyBlankBallot() throws Exception {
+        var election = readElection();
+
+        var ballot = readBallot("blankBallot.json");
         assertThat(verifyBallot(ballot, election)).isTrue();
     }
 }

@@ -22,8 +22,13 @@ describe('CreateBallot', () => {
         expect(sum.toString()).toBe("70");    
     });
 
-    test('should create vote', () => {
+    test('should create ballot', () => {
         const ballot = createBallot(election, credentials, [[0, 1, 0]]);
+        console.log(JSON.stringify(ballot, replaceBallot, 4));
+    });
+
+    test('should create blank ballot', () => {
+        const ballot = createBallot(election, credentials, [[1, 0, 0]]);
         console.log(JSON.stringify(ballot, replaceBallot, 4));
     });
 });

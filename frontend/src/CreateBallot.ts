@@ -234,7 +234,7 @@ function createOverallProof(publicKey: WrappedPublicKey, publicCred: BigInteger,
         const cs = checksum(message, group.q);
 
         const challenge0 = cs.subtract(challenge1).mod(group.q);
-        const response0 = w.subtract(ctSigma.r.multiply(challenge0)).mod(group.q);
+        const response0 = w.subtract(ct0.r.multiply(challenge0)).mod(group.q);
         const proof0 = { challenge: challenge0, response: response0 };
         const proof1 = { challenge: challenge1, response: response1 };
         return [ proof0, proof1 ];
