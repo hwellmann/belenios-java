@@ -14,11 +14,21 @@ import org.junit.jupiter.api.Test;
 public class ElectionHashTest {
 
     @Test
-    public void computeHash() throws IOException, NoSuchAlgorithmException {
+    public void computeElectionHash() throws IOException, NoSuchAlgorithmException {
         var bytes = Files.readAllBytes(Paths.get("src/test/resources/election01/election.json"));
         var digest = MessageDigest.getInstance("SHA-256");
         var encodedhash = digest.digest(bytes);
         String hash = Base64.getEncoder().withoutPadding().encodeToString(encodedhash);
         assertThat(hash).isEqualTo("AHHaEkaINgfPZTd1bPpAZ2rigNL3oWFCnlCA4GSh52A");
     }
+
+    @Test
+    public void computeBallotHash() throws IOException, NoSuchAlgorithmException {
+        var bytes = Files.readAllBytes(Paths.get("src/test/resources/election01/ballot.json"));
+        var digest = MessageDigest.getInstance("SHA-256");
+        var encodedhash = digest.digest(bytes);
+        String hash = Base64.getEncoder().withoutPadding().encodeToString(encodedhash);
+        assertThat(hash).isEqualTo("xDwOC0YJ3ZS1mg82oPhFCC3lNQAF6Cl8QIyFPSRE0wg");
+    }
+
 }

@@ -4,15 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.omadac.vote.belenios.algo.CreateBallot.createBallot;
 import static org.omadac.vote.belenios.algo.VerifyBallot.verifyBallot;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -32,11 +29,9 @@ public class CreateBallotTest {
 
     @BeforeEach
     public void before() {
-
         mapper.configOverride(BigInteger.class)
             .setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.STRING));
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
-
     }
 
     @Test
@@ -47,14 +42,13 @@ public class CreateBallotTest {
         assertThat(verifyBallot(ballot, election)).isTrue();
     }
 
-    private Election readElection() throws IOException, JsonProcessingException, JsonMappingException {
-
+    private Election readElection() throws Exception {
         var json = Files.readString(Paths.get("src/test/resources/election01/election.json"));
         var election = mapper.readValue(json, Election.class);
         return election;
     }
 
-    private Ballot readBallot(String fileName) throws IOException, JsonProcessingException, JsonMappingException {
+    private Ballot readBallot(String fileName) throws Exception {
         var json = Files.readString(Paths.get("src/test/resources/election01/", fileName));
         var election = mapper.readValue(json, Ballot.class);
         return election;
